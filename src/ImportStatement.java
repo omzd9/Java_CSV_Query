@@ -1,18 +1,21 @@
 import java.util.StringTokenizer;
 import java.util.Scanner;
 /*
-    this class is a representation of the filepath.
+    this class is a representation of the CSV filepath.
     it takes import statement << import filepath>> and extract the filepath and save it.
 */
 
-class  InputFile{
+class  ImportStatement extends Statement{
     private String filePath;
 
     //Constructer
-    public InputFile(String imp)
+    public ImportStatement(String imp)
     {
         //initializing the object
-           setFilePath(imp);
+        // call the Statament constructor
+            super(imp);
+
+            setFilePath();
             
     }
     
@@ -22,21 +25,21 @@ class  InputFile{
      * input : import filepath 
      * result : this.filepath= filepath
      */
-    public void setFilePath(String imp) {
+    private void setFilePath() {
         String str="";
         boolean condition = true;
         int i =0;
         while(condition)
         {
-            if(i>imp.length()-1)
+            if(i>statement.length()-1)
             {
                 condition=false;
                 
             }
             else{
-                    char c= imp.charAt(i);
+                    char c= statement.charAt(i);
                     if(str.equalsIgnoreCase("import")){
-                        this.filePath = imp.substring(i+1);
+                        this.filePath = statement.substring(i+1);
                         condition =false;
                     }
                    
