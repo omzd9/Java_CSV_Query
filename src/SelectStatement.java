@@ -1,14 +1,14 @@
 import java.util.StringTokenizer;
-import java.util.concurrent.locks.Condition;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 
 
 class SelectStatement extends Statement{
    
     String[] columns;
-    //FileTraitement inputFile;
+    String fromFile;
     Condition[] conditions;
     Predicat predicat;
 
@@ -74,37 +74,23 @@ class SelectStatement extends Statement{
     
     public void query(FileTraitement csv)
     {
-        String myStr="";
+        String header="";
         try{
             for (String string : columns) {
-                myStr=myStr + string + "\t";
+                header=header + string + "\t";
             }
-            System.out.println(myStr);
-            MappedByteBuffer buffer = csv.getFile().getChannel()
-                .map(FileChannel.MapMode.READ_ONLY, 0, csv.getFileSize()).load();
-            
-            boolean condition =true;
-            long i=csv.getLine1Size();
-            String line ="";
-            buffer.clear();
-            while(condition)
-            {
-                if(i>=csv.getFileSize())
-                {
-                    condition=false;
-                    break;
-                }
-               
-                char c = (char)buffer.get((int) i);
-           
-                if(c=='\n')
+            System.out.println(header);
+            String firstLine= Files.lines(csv.getPath()).findFirst().get(); 
+          
+            Files.lines(csv.getPath()).forEach(line->{
+                if(!line.equals(firstLine))
                 {
                     if(predicat==null)
                     {
                         
                         outPutData(line,csv.getColumnNames());
                     }
-                    else{
+                    else{ // predicat exist
                         String[] csvColumns = csv.getColumnNames();
                         String columnPredicat= predicat.getConditions()[0].getColumn();
                         String[] data = line.split(",");
@@ -137,15 +123,11 @@ class SelectStatement extends Statement{
                                         }
                             }
                         }
-                    }
-                    line="";
-                       
+                    }//prdicat exist
                 }
-                else{
-                    line = line+c;
-                }
-                i++;
-            }
+            } // end of lines
+            );
+
         }catch(IOException e){
             System.err.println(e);
         }
