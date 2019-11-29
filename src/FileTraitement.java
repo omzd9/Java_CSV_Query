@@ -83,15 +83,23 @@ class FileTraitement{
                 .map(FileChannel.MapMode.READ_ONLY, 0, getFileSize()).load();
             buffer.clear();
             byte[] data= new byte[line1Size];
-            buffer.get(data,0,line1Size-1);
+            buffer.get(data,0,line1Size-2);
             String str = new String(data);
             StringTokenizer tookens = new StringTokenizer(str,",");
             String[] columns = new String[tookens.countTokens()];
             int i=0;
             while(tookens.hasMoreTokens())
             {
-                columns[i++]=tookens.nextToken();
+                columns[i]=tookens.nextToken().replace(" ", "");
+                i++;
+                
             }
+            String tmp =   columns[columns.length-1];
+            String tmp2 =   columns[0];
+
+            columns[columns.length-1]= tmp.substring(0, tmp.length() - 2); // problem of the last column with two espace
+            
+            //columns[0]= tmp2.substring(0, tmp2.length() - 2); // problem of the last column with two espace
             columnNames = columns;
             
         }catch(Exception e){
@@ -112,14 +120,13 @@ class FileTraitement{
                 .map(FileChannel.MapMode.READ_ONLY, 0, getFileSize()).load();
             buffer.clear();
             boolean condition=true;
-            String line1="";
             int i=0;
             while(condition) 
                 {
                     char c = (char)buffer.get();
                     if(c=='\n')
                     {
-                        break;
+                        condition=false;
                     }
                     else{
                         i++;

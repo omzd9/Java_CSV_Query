@@ -13,10 +13,14 @@ public class Oracle{
     {
         
         FileTraitement csv = new FileTraitement(new ImportStatement("import ../document.csv").getFilePath());
-        SelectStatement sql = new SelectStatement("select ID,Name from document;");
+        SelectStatement sql = new SelectStatement("select Name,ID,Num,Age from document;");
         
         sql.query(csv);
-        //System.out.println(csv.getBuffer().toString());
+      
+      
+       
+            
+        
         
         
         
