@@ -1,5 +1,6 @@
 /**
- * Condition 
+ * Condition = column operator constant
+ * ex: name = 'omar'
  */
 
 public class Condition {

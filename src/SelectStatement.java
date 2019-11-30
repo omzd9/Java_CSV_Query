@@ -7,9 +7,9 @@ import java.nio.file.FileSystems;
 
 class SelectStatement extends Statement{
    
-    String[] columns;
-    String fromFile;
-    Condition[] conditions;
+    String[] columns; // sql select column
+    String fromFilePath; // from which file we gonna select
+    
     Predicat predicat;
 
     // constructor to initialize my select statement
@@ -19,9 +19,23 @@ class SelectStatement extends Statement{
         // setting the columns variable state
         setColumns();
         setPredicat();
+        setFromFile();
         
     }
-  
+    /**
+     * @param fromFile the fromFile to set
+     */
+    private void setFromFile() {
+        setPredicat();
+        String[] str= statement.split(" from ");
+        if(predicat==null){
+            this.fromFilePath = str[1].replace(";","").replace(" ", "") ;
+        }
+        else{
+            this.fromFilePath = str[1].split(" where ")[0].replace(" ", "") ;
+        }
+    }
+
     /**
      * set columns variable state
      */
@@ -65,13 +79,80 @@ class SelectStatement extends Statement{
     public Predicat getPredicat() {
         return predicat;
     }
-    /**
+  
+      /**
+     * @param condition : the condition which we want too evaluate
+     * @param data : a single line of csv file
+     * @param csv : the fileTraitement where data has been tooken
+     * this function return true if data is conform to condition clause
+     */
+    private boolean conditionTrue(Condition condition,String[] data,FileTraitement csv){
+        String[] csvColumns = csv.getColumnNames();
+        for (int j =0; j<csvColumns.length ;j++ ) {
+            if(condition.getColumn().equals(csvColumns[j]))
+            {
+                switch (condition.getOperator() )
+                {
+
+                    case "=" :
+                            if(condition.getConstant().contains("'")) 
+                            // if constant contain the character ' so it's string type
+                            {
+                                if(data[j].equals(condition.getConstant().replaceAll("'", "")))
+                                    {
+                                        return true;
+                                    }
+                                    
+                            }
+                            else{ // type of data is int
+                                if(Integer.parseInt(data[j]) == Integer.parseInt(condition.getConstant()))
+                                    {
+                                        return true;
+                                    }
+                            }
+                    
+                        break;
+                    case "!=":
+                                if(condition.getConstant().contains("'")) 
+                                // if constant contain the character ' so it's string type
+                                {
+                                    if(!data[j].equals(condition.getConstant().replaceAll("'", "")))
+                                        {
+                                            return true;
+                                        }
+                                }
+                                else{ // type of data is int
+                                    if(Integer.parseInt(data[j]) != Integer.parseInt(condition.getConstant()))
+                                        {
+                                            return true;
+                                        }
+                                }
+                        break;
+
+                    case ">" : //it's surely int
+                        if(Integer.parseInt(data[j])> Integer.parseInt(condition.getConstant()))
+                            {
+                                return true;
+                            }
+                        break;
+
+                    case "<" : //it's surely int
+                        if(Integer.parseInt(data[j])< Integer.parseInt(condition.getConstant()))
+                        {
+                            return true;
+                        }
+                        break;
+
+                        }
+            }
+        }
+        return false;
+    }
+      /**
      * query excute the query based in the sql statement columns and csv file Columns
      * it takes the csv file as an argument and output the result 
      * @param csv input file  
      */
-
-    
     public void query(FileTraitement csv)
     {
         String header="";
@@ -81,51 +162,50 @@ class SelectStatement extends Statement{
             }
             System.out.println(header);
             String firstLine= Files.lines(csv.getPath()).findFirst().get(); 
-          
+            String[] csvColumns = csv.getColumnNames();
             Files.lines(csv.getPath()).forEach(line->{
+                String[] data = line.split(",");
+                Boolean conditionsVerified2 =false; // second condition is not veridief yet
+                Boolean conditionsVerified =false; // first condition is not veridief yet
                 if(!line.equals(firstLine))
                 {
-                    if(predicat==null)
+                    if(predicat==null) // if there's any conditions
                     {
                         
-                        outPutData(line,csv.getColumnNames());
+                        outPutData(line,csvColumns);
                     }
                     else{ // predicat exist
-                        String[] csvColumns = csv.getColumnNames();
-                        String columnPredicat= predicat.getConditions()[0].getColumn();
-                        String[] data = line.split(",");
-                        
-                        for (int j =0; j<csvColumns.length ;j++ ) {
-                            if(columnPredicat.equals(csvColumns[j]))
+                        conditionsVerified = conditionTrue(this.predicat.getConditions()[0], data, csv);// vrifie first condition
+                        if(this.predicat.getConnector()!=null) // if we have two conditions
+                           
                             {
-                                switch (this.predicat.getConditions()[0].getOperator() ){
-
-                                    case "=" :
-                                    
-                                        break;
-                                    case "!=":
-                                        break;
-    
-                                    case ">" : //it's surely int
-                                        if(Integer.parseInt(data[j])> Integer.parseInt(this.predicat.getConditions()[0].getConstant()))
-                                            {
-                                                outPutData(line, csvColumns);
-                                            }
-                                        break;
-    
-                                    case "<" : //it's surely int
-                                        if(Integer.parseInt(data[j])< Integer.parseInt(this.predicat.getConditions()[0].getConstant()))
-                                        {
-                                            outPutData(line, csvColumns);
-                                        }
-                                        break;
-    
-                                        }
+                                conditionsVerified2 = conditionTrue(this.predicat.getConditions()[1], data, csv);//verifie second condition
                             }
+                               
+                        } //prdicat exist
+                if(predicat!=null)// if predicat = null no need to print because already done
+                        {
+                            if(this.predicat.getConnector()==null)
+                                {
+                                        if(conditionsVerified){outPutData(line, csvColumns);}
+                                }
+                                else{
+                                    if(this.predicat.getConnector()=="AND" || this.predicat.getConnector()=="and" )
+                                    {
+                                        if(conditionsVerified && conditionsVerified2){outPutData(line, csvColumns);}
+                                    }
+                                    if(this.predicat.getConnector()=="OR" || this.predicat.getConnector()=="or" )
+                                    {
+                                        if(conditionsVerified || conditionsVerified2){outPutData(line, csvColumns);}
+                                    }
+
+                                }
                         }
-                    }//prdicat exist
-                }
-            } // end of lines
+                
+                }//line > fisrt line
+            }// end of line
+               
+            
             );
 
         }catch(IOException e){
@@ -155,6 +235,12 @@ class SelectStatement extends Statement{
         }
         System.out.println(lineOutPut);
         
+    }
+    /**
+     * @return the fromFile
+     */
+    public String getFromFilePath() {
+        return fromFilePath;
     }
 
 }

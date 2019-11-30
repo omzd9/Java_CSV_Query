@@ -6,19 +6,19 @@ import java.nio.file.Path;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 
-class FileTraitement{
-    private String pattern; // file name 
+class FileTraitement {
+    
+    private String fileName; // file name 
     private String[] columnNames; //  column names within the csv file
-    private Path path; // lalalalal
+    private Path path; 
 
 
 
     //constructor
-    FileTraitement(String pattern){
-
-            this.pattern=pattern;
+    FileTraitement(String filename){    
             // after having the file pattern we can set all the state's fields
             //setFile();
+            this.fileName=filename;
             setPath();
             setColumnNames();
             
@@ -28,7 +28,7 @@ class FileTraitement{
      * @param path the path to set
      */
     private void setPath() {
-        this.path = FileSystems.getDefault().getPath(pattern);
+        this.path = FileSystems.getDefault().getPath(fileName);
     }
     /**
      * @return the path
@@ -74,23 +74,21 @@ class FileTraitement{
             System.err.println(e);
         }
 
-        }
-    
-  
+    }
     /**
-     * @param pattern the pattern to set
-     * * modify the csv file which will trigger all state function to update
+     * @param fileName the fileName to set
      */
-    public void setPattern(String pattern) {
-        this.pattern = pattern;
+    public void setFileName(String file) {
+        
+        this.fileName= file;
         setPath();
         setColumnNames();
     }
     /**
-     * @return the pattern
+     * @return the fileName
      */
-    public String getPattern() {
-        return pattern;
+    public String getFileName() {
+        return fileName;
     }
   
 

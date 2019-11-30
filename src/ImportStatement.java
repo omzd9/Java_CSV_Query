@@ -6,14 +6,14 @@ import java.util.Scanner;
 */
 
 class  ImportStatement extends Statement{
-    private String filePath;
+    private String filePath; // ex : import filepath;
 
     //Constructer
-    public ImportStatement(String imp)
+    public ImportStatement(String importStatement)
     {
         //initializing the object
         // call the Statament constructor
-            super(imp);
+            super(importStatement);
 
             setFilePath();
             
@@ -26,30 +26,8 @@ class  ImportStatement extends Statement{
      * result : this.filepath= filepath
      */
     private void setFilePath() {
-        String str="";
-        boolean condition = true;
-        int i =0;
-        while(condition)
-        {
-            if(i>statement.length()-1)
-            {
-                condition=false;
-                
-            }
-            else{
-                    char c= statement.charAt(i);
-                    if(str.equalsIgnoreCase("import")){
-                        this.filePath = statement.substring(i+1);
-                        condition =false;
-                    }
-                   
-                    else if (c!=' ')
-                    {
-                        str = str+c;
-                    }
-                    i++;
-                }
-        }
+        String str = this.extractSubString(statement, "import");
+        this.filePath = str.replace(" ", "").replace(";", "");
     }
     /**
      * @return the filePath
