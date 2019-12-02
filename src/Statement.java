@@ -1,5 +1,5 @@
 /**
- * this class a parent class for all the  user's input  which is :
+ * this class a parent class for all the  user's statement :
     * Select statement : SelectStatement.java 
     * Import statement : ImportStatement.java
  */

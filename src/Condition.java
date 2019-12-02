@@ -1,6 +1,6 @@
 /**
  * Condition = column operator constant
- * ex: name = 'omar'
+ * ex: => name = 'omar'
  */
 
 public class Condition {
@@ -14,24 +14,7 @@ public class Condition {
         this.operator=op.replaceAll(" ", "");
         this.constant=cons.replaceAll(" ", "").replaceAll(";", "");
     }
-    /**
-     * @param column the column to set
-     */
-    public void setColumn(String column) {
-        this.column = column.replaceAll(" ", "");
-    }
-    /**
-     * @param constant the constant to set
-     */
-    public void setConstant(String constant) {
-        this.constant = constant.replaceAll(" ", "");
-    }
-    /**
-     * @param operator the operator to set
-     */
-    public void setOperator(String operator) {
-        this.operator = operator.replaceAll(" ", "").replaceAll(";", "");
-    }
+ 
 
     /**
      * @return the constant

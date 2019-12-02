@@ -4,13 +4,14 @@ import java.nio.file.Path;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 
-
+/**
+ * this class represent the select statement
+ */
 class SelectStatement extends Statement{
    
     String[] columns; // sql select column
     String fromFilePath; // from which file we gonna select
-    
-    Predicat predicat;
+    Predicat predicat; // the select statement predicat
 
     // constructor to initialize my select statement
     public SelectStatement(String Statement){
@@ -27,12 +28,12 @@ class SelectStatement extends Statement{
      */
     private void setFromFile() {
         setPredicat();
-        String[] str= statement.split(" from ");
+        String[] str= statement.split(" FROM ");
         if(predicat==null){
             this.fromFilePath = str[1].replace(";","").replace(" ", "") ;
         }
         else{
-            this.fromFilePath = str[1].split(" where ")[0].replace(" ", "") ;
+            this.fromFilePath = str[1].split(" WHERE ")[0].replace(" ", "") ;
         }
     }
 
@@ -40,9 +41,9 @@ class SelectStatement extends Statement{
      * set columns variable state
      */
     public void setColumns() {
-        String temp = this.extractSubString(statement,"select");
+        String temp = this.extractSubString(statement,"SELECT");
         //temp.split("from");
-        String token =  temp.split("from")[0];
+        String token =  temp.split("FROM")[0];
         StringTokenizer column = new StringTokenizer(token,",");
         String[] columns = new String[column.countTokens()];
         int i=0;
@@ -52,12 +53,11 @@ class SelectStatement extends Statement{
         }
         this.columns = columns;
     }
-    /**
-     * 
-     */
+  
+    
     private  void setPredicat() {
         
-        String[] tookens = statement.split(" where ");
+        String[] tookens = statement.split(" WHERE ");
         if(tookens.length<2)
         {
             predicat=null;
@@ -84,7 +84,7 @@ class SelectStatement extends Statement{
      * @param condition : the condition which we want too evaluate
      * @param data : a single line of csv file
      * @param csv : the fileTraitement where data has been tooken
-     * this function return true if data is conform to condition clause
+     * this function return true if data is conform to condition clause (data = single csv line)
      */
     private boolean conditionTrue(Condition condition,String[] data,FileTraitement csv){
         String[] csvColumns = csv.getColumnNames();
@@ -148,10 +148,10 @@ class SelectStatement extends Statement{
         }
         return false;
     }
-      /**
-     * query excute the query based in the sql statement columns and csv file Columns
-     * it takes the csv file as an argument and output the result 
-     * @param csv input file  
+      /**@param csv input file 
+         * the main function that excute the query
+         * it excute the query based in the sql statement columns and csv file Columns
+         * it takes the csv file as an argument and output the result  
      */
     public void query(FileTraitement csv)
     {
@@ -214,7 +214,7 @@ class SelectStatement extends Statement{
         
     }
     /**
-     * it takes single csv file line and try to output only the columns specified in the sql query
+     * it takes single csv file line and only print the columns specified in the select query
      * @param line single line of csv file
      * @param csvColumns   the cvs columns name
      */

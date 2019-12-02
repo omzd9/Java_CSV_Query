@@ -5,6 +5,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.io.IOException;
 import java.nio.file.FileSystems;
+/*
+* this class represent a csv file in the schema
+*/
 
 class FileTraitement {
     
@@ -24,9 +27,7 @@ class FileTraitement {
             
 
     }
-    /**
-     * @param path the path to set
-     */
+   
     private void setPath() {
         this.path = FileSystems.getDefault().getPath(fileName);
     }
@@ -38,7 +39,7 @@ class FileTraitement {
     }
    
     /**
-     * @return the column
+     * @return the columnNames
      */
     public String[] getColumnNames() {
         if(columnNames==null)
@@ -50,14 +51,13 @@ class FileTraitement {
    
   
  
-                    //setters
     /**
-     * this function takes the data from the first line and transform it to a string table and put it un colimnNames state variable
+     * this function takes the first line and transform it to a string table and put it un columnNames state variable
      */
-    public void setColumnNames() {
+    private void setColumnNames() {
         try{
             
-            String firstLine= Files.lines(path).findFirst().get(); // get first line
+            String firstLine= Files.lines(path).findFirst().get(); // get the first csv file line
             StringTokenizer tookens = new StringTokenizer(firstLine,",");
             String[] columns = new String[tookens.countTokens()];
             int i=0;

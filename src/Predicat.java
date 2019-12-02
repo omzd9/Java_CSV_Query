@@ -2,6 +2,7 @@ import java.util.StringTokenizer;
 
 /**
  * this class represent the query predicat
+ * select columns from where PREDICAT ;
  */
 public class Predicat {
 
@@ -17,9 +18,8 @@ public class Predicat {
 
 
 
-    /**
-     * @param connector the connector to set
-     */
+   
+    
     private void setConnector() {
         if(predicat.contains(" AND ") )
         {
@@ -35,9 +35,8 @@ public class Predicat {
             this.connector = "or";
         }
     }
-    /**
-     * @param condition the condition to set
-     */
+   
+    
     private void setConditions() {
        setConnector();
        if(this.connector == null) // if we have only one condition without connector || select column.. from document;
