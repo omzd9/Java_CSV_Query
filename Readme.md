@@ -6,7 +6,7 @@
 
 ## Basic Overview
 
-> Design and realisation of csv query tool based on sql language using java.
+> This's a csv query tool based on sql language using java.
 >
 > The idea behind is trying to create a tool (like sql scripting interpreter) to retreive data from csv file using sql syntax.
 
